@@ -11,6 +11,8 @@ IF_FACE_CARD = 0
 
 @play_again = false
 
+cover = '/public/images/cards/cover.jpg'
+
 helpers do
   def calculate_total(cards)
     arr = cards.map{|element| element[1]}
@@ -54,6 +56,10 @@ helpers do
     end
 
     "<img src='/images/cards/#{suit}_#{value}.jpg' class='card_image'>"
+  end
+
+  def cover_image
+    "<img src='/images/cards/cover.jpg'>"
   end
 
   def winner!(msg)
