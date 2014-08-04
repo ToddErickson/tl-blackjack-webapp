@@ -8,6 +8,7 @@ DEALER_MIN_HIT = 17
 FACE_CARD = 10
 ACE = 11
 IF_FACE_CARD = 0
+INITIAL_POT_AMOUNT = 500
 
 @play_again = false
 
@@ -65,20 +66,31 @@ helpers do
   def winner!(msg)
     @success = "<strong>#{session[:player_name]} wins!</strong> #{msg}"
     @show_hit_or_stay_buttons = false
+    session[:player_pot] = session[:player_pot] + session[:player_bet].to_i
     @play_again = true
   end
 
   def loser!(msg)
     @error = "<strong>#{session[:player_name]} lost</strong>. #{msg}"
     @show_hit_or_stay_buttons = false
-    @play_again = true
+    session[:player_pot] = session[:player_pot] - session[:player_bet].to_i
+      if session[:player_pot] == 0
+        @error = "Sorry, #{session[:player_name]}, you lost all of your money. Try again!"
+        halt erb(:game_over)
+      else
+        @play_again = true
+      end
   end
 
-  def tie!
-    @success = "<strong>It's a tie!</strong> #{msg}"
-    @show_hit_or_stay_buttons = false
+  def tie!(msg)
     @play_again = true
+    @show_hit_or_stay_buttons = false
+    @success = "<strong>It's a tie!</strong> #{msg}"
   end
+
+  # def bet
+
+  # end
 end
 
 before do
@@ -94,6 +106,7 @@ get '/' do
 end
 
 get '/new_player' do
+  session[:player_pot] = INITIAL_POT_AMOUNT
   erb :new_player
 end
 
@@ -106,7 +119,25 @@ post '/new_player' do
   end
 
   session[:player_name] = params[:player_name] 
-  redirect '/game'
+  redirect '/bet'
+end
+
+get '/bet' do
+  session[:player_bet] = nil
+  erb :bet
+end
+
+post '/bet' do
+  if params[:bet_amount].nil? || params[:bet_amount].to_i == 0
+    @error = "Must make a bet"
+    halt erb(:bet)
+  elsif params[:bet_amount].to_i > session[:player_pot]
+    @error = "Bet amount cannot exceed your total pot, which is $#{session[:player_pot]}."
+    halt erb(:bet)
+  else
+    session[:player_bet] = params[:bet_amount].to_i
+    redirect '/game'
+  end
 end
 
 get '/game' do
@@ -140,7 +171,6 @@ post '/game/player/hit' do
     winner!("#{session[:player_name]} hit blackjack!")
   elsif player_total > BLACKJACK_AMOUNT
     loser!("#{session[:player_name]} busted with #{player_total}.")
-
   end
 
   erb :game
@@ -179,7 +209,7 @@ end
 
 get '/game/compare' do
 
-@show_hit_or_stay_buttons = false
+  @show_hit_or_stay_buttons = false
 
   player_total = calculate_total(session[:player_cards])
   dealer_total = calculate_total(session[:dealer_cards])

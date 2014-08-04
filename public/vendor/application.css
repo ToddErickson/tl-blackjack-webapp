@@ -10,3 +10,7 @@ form#stay_form {
 img.card_image {
   margin: 0px 25px 25px 0px;
 }
+
+img.cover_image {
+  margin: 0px 100px 100px 0px;
+}
