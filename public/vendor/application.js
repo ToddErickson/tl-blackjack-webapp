@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $('#player_color').click(function() {
-    alert(hi!);
-    return false
+    $('#player_area').css('background_color', 'yellow')
+    return false;
   });
 }); 

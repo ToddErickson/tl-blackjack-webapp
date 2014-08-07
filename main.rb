@@ -144,7 +144,7 @@ get '/game' do
 
   session[:turn] = session[:player_name]
 
-  # setup deack
+  # setup deck
   suits = ['H', 'D', 'C', 'S']
   values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   session[:deck] = suits.product(values).shuffle!
@@ -173,7 +173,7 @@ post '/game/player/hit' do
     loser!("#{session[:player_name]} busted with #{player_total}.")
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do

@@ -1,3 +1,5 @@
+<div id='game'>
+
 <h1>Blackjack</h1>
 
 <p>Welcome <%= session[:player_name] %>!</p>
@@ -32,7 +34,6 @@
 <br/>
 
 <div class="well" id='player_area'>
-  <a id='player_color' href='#'>Change the background to yellow</a>
   <h4>Player's Cards:</h4>
     <% session[:player_cards].each do |card| %>
       <%= card_image(card) %>
@@ -59,3 +60,4 @@ What would <%= session[:player_name] %>  like to do?
 
 <% end %>
 </p>
+</div>
